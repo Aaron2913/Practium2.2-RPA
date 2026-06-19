@@ -1,0 +1,1846 @@
+{
+  "name": "Reto_Final",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        528
+      ],
+      "id": "4eda992f-709f-4cd7-8ee5-40a94649c48f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -688,
+        -64
+      ],
+      "id": "31cb7d67-1f61-44b3-9f03-649ea4e8a604",
+      "name": "Descargar_Supercias_Ranking",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f677aae-bb16-46ab-89b4-16660a18cf46",
+              "name": "fuente",
+              "value": "supercias_ranking",
+              "type": "string"
+            },
+            {
+              "id": "680440e0-913e-42ea-9f94-512dece03378",
+              "name": "institucion",
+              "value": "supercias",
+              "type": "string"
+            },
+            {
+              "id": "8c743989-c708-49e8-96d7-4e8ee7c363c1",
+              "name": "categoria",
+              "value": "ranking",
+              "type": "string"
+            },
+            {
+              "id": "80e18d32-3078-44bc-a242-f89d5b69f43f",
+              "name": "nombre_base",
+              "value": "supercias_ranking",
+              "type": "string"
+            },
+            {
+              "id": "90369423-51a3-4596-8fa7-20622a866230",
+              "name": "extension_esperada",
+              "value": "html",
+              "type": "string"
+            },
+            {
+              "id": "3a0f40ac-8dc5-4320-ba6a-8766b5193290",
+              "name": "carperta_destino",
+              "value": "/home/node/datos_macroentorno/supercias/ranking",
+              "type": "string"
+            },
+            {
+              "id": "1bf80caa-3aa6-4cc5-9a5c-b3371fc8c780",
+              "name": "url",
+              "value": "https://appscvsmovil.supercias.gob.ec/ranking/reporte.html",
+              "type": "string"
+            },
+            {
+              "id": "7dcfd719-fe30-4a50-9766-7c1027ad3540",
+              "name": "metodo_http",
+              "value": "GET",
+              "type": "string"
+            },
+            {
+              "id": "6940e58e-a13f-4687-9963-b4a6b95d921b",
+              "name": "periocidad",
+              "value": "anual",
+              "type": "string"
+            },
+            {
+              "id": "130e7bf3-d964-4c54-897f-66eda722a172",
+              "name": "max_intentos",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "636ab2ad-17f6-46b9-884a-20db39791659",
+              "name": "guardar_crudo",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "ad2996b2-b941-4a0d-a822-9eb03f63ecd2",
+              "name": "cargar_oracle",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "1cd1cefe-cc04-4e8c-9e38-0fcf2e964f9c",
+              "name": "periocidad",
+              "value": "anual",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -912,
+        -64
+      ],
+      "id": "eed8dd44-3a27-4450-bae9-9c877da00fff",
+      "name": "Config_Fuente_Ranking"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config_Fuente_Ranking').first().json;\n\nconst carpetaDestino = cfg.carpeta_destino || \"/home/node/datos_macroentorno/supercias/ranking\";\n\nconst fecha = new Date()\n  .toISOString()\n  .slice(0, 10)\n  .replace(/-/g, '');\n\nconst nombreArchivo = `${cfg.nombre_base || \"supercias_ranking\"}_${fecha}.${cfg.extension_esperada || \"html\"}`;\n\nconst rutaCompleta = `${carpetaDestino}/${nombreArchivo}`;\n\nreturn items.map(item => {\n  const tieneArchivo = !!item.binary?.data;\n\n  return {\n    json: {\n      fuente: cfg.fuente || \"supercias_ranking\",\n      institucion: cfg.institucion || \"supercias\",\n      categoria: cfg.categoria || \"ranking\",\n      periodicidad: cfg.periodicidad || \"anual\",\n      fecha_descarga: fecha,\n      nombre_archivo: nombreArchivo,\n      ruta_completa: rutaCompleta,\n      extension_esperada: cfg.extension_esperada || \"html\",\n      tiene_archivo: tieneArchivo,\n      estado_descarga: tieneArchivo ? \"OK\" : \"ERROR\",\n      mensaje: tieneArchivo\n        ? \"Archivo descargado correctamente\"\n        : \"No se encontró binary.data en la respuesta\"\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        -64
+      ],
+      "id": "effa7758-57d6-4c63-831c-d1ebebcfc77d",
+      "name": "Preparar_Nombre_Supercias"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "33e81712-a26b-4931-99ee-0ce26e3700e0",
+              "leftValue": "={{ $json.tiene_archivo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -256,
+        -64
+      ],
+      "id": "17e247ae-5ce3-4ea2-9080-e570bec781e9",
+      "name": "Validar_Archivo_Supercias"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_completa }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -128
+      ],
+      "id": "3edc711d-b6fa-4217-be69-68d4f92a78f4",
+      "name": "Guardar_Archivo_Supercias"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = items[0].json;\n\n// Tomamos los datos originales del nodo donde se preparó el archivo\nconst datosArchivo = $('Preparar_Nombre_Supercias').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `log_${datosArchivo.fuente}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: \"RPA_Macroentorno_01_Supercias_Ranking\",\n  fuente: datosArchivo.fuente,\n  institucion: datosArchivo.institucion,\n  categoria: datosArchivo.categoria,\n  periodicidad: datosArchivo.periodicidad,\n  estado: \"OK\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo,\n  ruta_archivo: datosArchivo.ruta_completa,\n  mensaje: \"Archivo crudo descargado, validado y guardado correctamente\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"OK\",\n      mensaje_log: \"Log de ejecución preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -176
+      ],
+      "id": "afaa2c7a-dae8-41f3-88e3-8aec75b42751",
+      "name": "Preparar_Log_OK_Supercias1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        -144
+      ],
+      "id": "2644e254-c17e-4313-8275-b7ee2705b5c2",
+      "name": "Guardar_Log_OK_Supercias"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_Supercias').first().json;\nconst datosLog = $('Preparar_Log_OK_Supercias1').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_ok_${datosArchivo.fuente}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de ejecución correcta\n\nEstado: OK\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente}\nInstitución: ${datosArchivo.institucion}\nCategoría: ${datosArchivo.categoria}\nPeriodicidad: ${datosArchivo.periodicidad}\n\nArchivo generado:\n${datosArchivo.nombre_archivo}\n\nRuta del archivo crudo:\n${datosArchivo.ruta_completa}\n\nLog de ejecución:\n${datosLog.ruta_log}\n\nMensaje:\nEl archivo fue descargado, validado, almacenado y registrado correctamente.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"OK\",\n      mensaje_notificacion: \"Notificación de ejecución correcta preparada\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        -128
+      ],
+      "id": "4fb579f2-b753-4f63-b4f1-fcd9e5e9e70b",
+      "name": "Preparar_Notificacion_OK_Supercias"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        -80
+      ],
+      "id": "afe0680c-8e47-4645-9538-fdb628fa3b42",
+      "name": "Guardar_Notificacion_OK_Supercias"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_Supercias').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: \"RPA_Macroentorno_01_Supercias_Ranking\",\n  fuente: datosArchivo.fuente || \"supercias_ranking\",\n  institucion: datosArchivo.institucion || \"supercias\",\n  categoria: datosArchivo.categoria || \"ranking\",\n  periodicidad: datosArchivo.periodicidad || \"anual\",\n  estado: \"ERROR\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo || null,\n  ruta_archivo: datosArchivo.ruta_completa || null,\n  mensaje_error: datosArchivo.mensaje || \"No se descargó el archivo o no existe binary.data\",\n  accion_tomada: \"Se registra incidente y el flujo puede continuar con otras fuentes\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"ERROR\",\n      mensaje_log: \"Log de error preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        80
+      ],
+      "id": "8275a8d0-3ef9-4fcd-adb7-c14a4e90df69",
+      "name": "Preparar_Log_Error_Supercias"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        112
+      ],
+      "id": "0bf2bc30-fdd5-4a3d-bf68-97320eb5efd9",
+      "name": "Guardar_Log_Error_Supercias"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_Supercias').first().json;\nconst datosError = $('Preparar_Log_Error_Supercias').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de fallo parcial\n\nEstado: ERROR\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente || 'supercias_ranking'}\nInstitución: ${datosArchivo.institucion || 'supercias'}\nCategoría: ${datosArchivo.categoria || 'ranking'}\nPeriodicidad: ${datosArchivo.periodicidad || 'anual'}\n\nArchivo esperado:\n${datosArchivo.nombre_archivo || 'No generado'}\n\nRuta esperada:\n${datosArchivo.ruta_completa || 'No definida'}\n\nLog de error:\n${datosError.ruta_log || 'No generado'}\n\nMensaje de error:\n${datosArchivo.mensaje || 'No se descargó el archivo o no existe binary.data'}\n\nAcción tomada:\nSe registró el incidente en logs. El pipeline puede continuar con otras fuentes sin detener toda la ejecución.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"ERROR\",\n      mensaje_notificacion: \"Notificación de error preparada correctamente\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        144
+      ],
+      "id": "7edd018a-3aff-4b19-b30f-58d0a195739f",
+      "name": "Preparar_Notificacion_Error_Supercias"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        80
+      ],
+      "id": "e5882ad1-a18e-4703-b23c-27cc8148e22a",
+      "name": "Guardar_Notificacion_Error_Supercias"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "60d25635-3ebd-4070-b512-1c7a1b56f276",
+              "name": "workflow_nombre",
+              "value": "RPA_Macroentorno_Final",
+              "type": "string"
+            },
+            {
+              "id": "b4a6fc4a-350b-473a-bfbf-35b1f124152b",
+              "name": "fuente",
+              "value": "mineduc_amie",
+              "type": "string"
+            },
+            {
+              "id": "710691ea-a234-468c-afe0-51e784d0f340",
+              "name": "institucion",
+              "value": "mineduc",
+              "type": "string"
+            },
+            {
+              "id": "f8347f85-cd27-4ab4-bb85-30ef1275f761",
+              "name": "categoria",
+              "value": "amie",
+              "type": "string"
+            },
+            {
+              "id": "db4fac40-b5c8-4204-b2a4-2126bbb6337b",
+              "name": "nombre_base",
+              "value": "mineduc_amie",
+              "type": "string"
+            },
+            {
+              "id": "6bb6e198-b10b-4b01-9bf2-da38ef7e294c",
+              "name": "extension_esperada",
+              "value": "csv",
+              "type": "string"
+            },
+            {
+              "id": "3a6a7107-11e3-424b-96fb-5a65d6c664d6",
+              "name": "carpeta_destino",
+              "value": "/home/node/datos_macroentorno/mineduc/amie",
+              "type": "string"
+            },
+            {
+              "id": "584c2cb2-ca6b-4460-8aaf-78457ab505c5",
+              "name": "url",
+              "value": "https://educacion.gob.ec/wp-content/uploads/downloads/2025/04/2_MINEDUC_RegistrosAdministrativos_2024-2025Inicio.csv",
+              "type": "string"
+            },
+            {
+              "id": "ea9435db-5cc2-49f8-bfab-0ef32553af91",
+              "name": "metodo_http",
+              "value": "GET",
+              "type": "string"
+            },
+            {
+              "id": "c4547e7a-0c3f-44c6-aa96-791867abade8",
+              "name": "periocidad",
+              "value": "anual",
+              "type": "string"
+            },
+            {
+              "id": "1d3c8190-0483-4b07-b4a6-0b4fc9fe22f8",
+              "name": "max_intentos",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "2a9d732e-071b-4126-be8f-894b3a92f055",
+              "name": "guardar_crudos",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "64b46b96-c436-4608-941b-a2d541d2c0f2",
+              "name": "cargar_oracle",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1024,
+        368
+      ],
+      "id": "85390ac7-a0ec-406c-ba68-0d2ced4a357c",
+      "name": "Config_MINEDUC_AMIE"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -848,
+        384
+      ],
+      "id": "d74b195a-6afc-44b4-b10e-5cf53b92a346",
+      "name": "Descargar_MINEDUC_AMIE",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config_MINEDUC_AMIE').first().json;\n\nconst carpetaDestino = cfg.carpeta_destino;\n\nconst fecha = new Date()\n  .toISOString()\n  .slice(0, 10)\n  .replace(/-/g, '');\n\nconst nombreArchivo = `${cfg.nombre_base}_${fecha}.${cfg.extension_esperada}`;\n\nconst rutaCompleta = `${carpetaDestino}/${nombreArchivo}`;\n\nreturn items.map(item => {\n  const tieneArchivo = !!item.binary?.data;\n\n  return {\n    json: {\n      workflow_nombre: cfg.workflow_nombre,\n      fuente: cfg.fuente,\n      institucion: cfg.institucion,\n      categoria: cfg.categoria,\n      periodicidad: cfg.periodicidad,\n      fecha_descarga: fecha,\n      nombre_archivo: nombreArchivo,\n      ruta_completa: rutaCompleta,\n      extension_esperada: cfg.extension_esperada,\n      tiene_archivo: tieneArchivo,\n      estado_descarga: tieneArchivo ? \"OK\" : \"ERROR\",\n      mensaje: tieneArchivo\n        ? \"Archivo descargado correctamente\"\n        : \"No se encontró binary.data en la respuesta\"\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        400
+      ],
+      "id": "67e9e420-048f-4741-bfaa-0ec673105868",
+      "name": "Preparar_Nombre_MINEDUC"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "33e81712-a26b-4931-99ee-0ce26e3700e0",
+              "leftValue": "={{ $json.tiene_archivo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        400
+      ],
+      "id": "1acc63cf-4c2d-4294-9b18-55d70a337e46",
+      "name": "Validar_Archivo_MINEDUC"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_completa }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        320
+      ],
+      "id": "2fa7772c-2319-4f58-90dd-7aed8900a590",
+      "name": "Guardar_Archivo_MINEDUC"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_MINEDUC').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `log_${datosArchivo.fuente}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente,\n  institucion: datosArchivo.institucion,\n  categoria: datosArchivo.categoria,\n  periodicidad: datosArchivo.periodicidad,\n  estado: \"OK\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo,\n  ruta_archivo: datosArchivo.ruta_completa,\n  mensaje: \"Archivo crudo descargado, validado y guardado correctamente\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"OK\",\n      mensaje_log: \"Log de ejecución preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        320
+      ],
+      "id": "76b03440-ba86-4408-b5f0-e19536465939",
+      "name": "Preparar_Log_OK_MINEDUC"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        304
+      ],
+      "id": "4b287690-9d99-4a01-9352-abe2c7c87160",
+      "name": "Guardar_Log_OK_MINEDUC"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_MINEDUC').first().json;\nconst datosLog = $('Preparar_Log_OK_MINEDUC').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_ok_${datosArchivo.fuente}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de ejecución correcta\n\nEstado: OK\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente}\nInstitución: ${datosArchivo.institucion}\nCategoría: ${datosArchivo.categoria}\nPeriodicidad: ${datosArchivo.periodicidad}\n\nArchivo generado:\n${datosArchivo.nombre_archivo}\n\nRuta del archivo crudo:\n${datosArchivo.ruta_completa}\n\nLog de ejecución:\n${datosLog.ruta_log}\n\nMensaje:\nEl archivo fue descargado, validado, almacenado y registrado correctamente.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"OK\",\n      mensaje_notificacion: \"Notificación de ejecución correcta preparada\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        320
+      ],
+      "id": "0898b0ec-d1e1-424b-94dc-56ae627fc2bd",
+      "name": "Preparar_Notificacion_OK_MINEDUC"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        704,
+        368
+      ],
+      "id": "020d9b76-4658-4fdf-804e-0a931b305262",
+      "name": "Guardar_Notificacion_OK_MINEDUC"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_MINEDUC').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente || \"mineduc_amie\",\n  institucion: datosArchivo.institucion || \"mineduc\",\n  categoria: datosArchivo.categoria || \"amie\",\n  periodicidad: datosArchivo.periodicidad || \"anual\",\n  estado: \"ERROR\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo || null,\n  ruta_archivo: datosArchivo.ruta_completa || null,\n  mensaje_error: datosArchivo.mensaje || \"No se descargó el archivo o no existe binary.data\",\n  accion_tomada: \"Se registra incidente y el flujo puede continuar con otras fuentes\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"ERROR\",\n      mensaje_log: \"Log de error preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        528
+      ],
+      "id": "04a2adf8-ea2b-4732-a945-306dc5593e86",
+      "name": "Preparar_Log_Error_MINEDUC"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        560
+      ],
+      "id": "4fed8cce-b2d6-4da0-b63e-6da74058d4e9",
+      "name": "Guardar_Log_Error_MINEDUC"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_MINEDUC').first().json;\nconst datosError = $('Preparar_Log_Error_MINEDUC').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de fallo parcial\n\nEstado: ERROR\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente || 'mineduc_amie'}\nInstitución: ${datosArchivo.institucion || 'mineduc'}\nCategoría: ${datosArchivo.categoria || 'amie'}\nPeriodicidad: ${datosArchivo.periodicidad || 'anual'}\n\nArchivo esperado:\n${datosArchivo.nombre_archivo || 'No generado'}\n\nRuta esperada:\n${datosArchivo.ruta_completa || 'No definida'}\n\nLog de error:\n${datosError.ruta_log || 'No generado'}\n\nMensaje de error:\n${datosArchivo.mensaje || 'No se descargó el archivo o no existe binary.data'}\n\nAcción tomada:\nSe registró el incidente en logs. El pipeline puede continuar con otras fuentes sin detener toda la ejecución.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"ERROR\",\n      mensaje_notificacion: \"Notificación de error preparada correctamente\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        592
+      ],
+      "id": "6ad74465-99d7-4b66-8d56-330bbb85102a",
+      "name": "Preparar_Notificacion_Error_MINEDUC"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        560
+      ],
+      "id": "4b0ba650-2e5a-4365-97e7-b4e189c7c632",
+      "name": "Guardar_Notificacion_Error_MINEDUC"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "678c0630-5958-4aae-9674-a2169e7dd7e4",
+              "name": "workflow_nombre",
+              "value": "RPA_Macroentorno_Final",
+              "type": "string"
+            },
+            {
+              "id": "79fe7e35-30d4-4a3b-ade8-57a63de1c6ec",
+              "name": "fuente",
+              "value": "bce_riesgo_pais",
+              "type": "string"
+            },
+            {
+              "id": "9446b69e-0ca8-424c-88ca-eb25990c8b60",
+              "name": "institucion",
+              "value": "bce",
+              "type": "string"
+            },
+            {
+              "id": "1d0f882a-313b-413a-9baa-429c98cf6a3e",
+              "name": "categoria",
+              "value": "publicaciones",
+              "type": "string"
+            },
+            {
+              "id": "b4ecd211-6c28-4263-b556-6dde81b2ebdc",
+              "name": "nombre_base",
+              "value": "bcce_riesgo_pais",
+              "type": "string"
+            },
+            {
+              "id": "7a4ecfdd-8047-41dd-8e43-f9c85548b6ad",
+              "name": "extension_esperada",
+              "value": "html",
+              "type": "string"
+            },
+            {
+              "id": "cacc67b4-e5d4-47b9-a7b2-e4c95709b28f",
+              "name": "carpeta_destino",
+              "value": "/home/node/datos_macroentorno/bce/publicaciones",
+              "type": "string"
+            },
+            {
+              "id": "e0cec4d3-d8aa-45d7-91c6-d8cce3250724",
+              "name": "url",
+              "value": "https://contenido.bce.fin.ec/documentos/informacioneconomica/indicadores/general/RiesgoPais.html",
+              "type": "string"
+            },
+            {
+              "id": "8373b34f-bbc1-45a7-89c2-bacbade13214",
+              "name": "metodo_http",
+              "value": "GET",
+              "type": "string"
+            },
+            {
+              "id": "2aba4401-bdcf-4cfb-b5df-17e4fd07c7be",
+              "name": "periocidad",
+              "value": "diaria",
+              "type": "string"
+            },
+            {
+              "id": "bb642ab8-a7af-4ad4-8f52-41deffdd64d7",
+              "name": "max_intentos",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "e89801e0-5637-4b38-bbc2-14fae7ef50b0",
+              "name": "guardar_crudo",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "94992614-a5d1-406e-9952-7883015fcd05",
+              "name": "cargar_oracle",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1056,
+        720
+      ],
+      "id": "93a2ee8b-f23c-463c-8099-32ee968768b9",
+      "name": "Config_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -816,
+        848
+      ],
+      "id": "da75d93f-12b5-446a-aba4-2d845621ad3e",
+      "name": "Descargar_BCE_RiesgoPais",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config_BCE_RiesgoPais').first().json;\n\nconst carpetaDestino = cfg.carpeta_destino;\n\nconst fecha = new Date()\n  .toISOString()\n  .slice(0, 10)\n  .replace(/-/g, '');\n\nconst nombreArchivo = `${cfg.nombre_base}_${fecha}.${cfg.extension_esperada}`;\n\nconst rutaCompleta = `${carpetaDestino}/${nombreArchivo}`;\n\nreturn items.map(item => {\n  const tieneArchivo = !!item.binary?.data;\n\n  return {\n    json: {\n      workflow_nombre: cfg.workflow_nombre,\n      fuente: cfg.fuente,\n      institucion: cfg.institucion,\n      categoria: cfg.categoria,\n      periodicidad: cfg.periodicidad,\n      fecha_descarga: fecha,\n      nombre_archivo: nombreArchivo,\n      ruta_completa: rutaCompleta,\n      extension_esperada: cfg.extension_esperada,\n      tiene_archivo: tieneArchivo,\n      estado_descarga: tieneArchivo ? \"OK\" : \"ERROR\",\n      mensaje: tieneArchivo\n        ? \"Archivo descargado correctamente\"\n        : \"No se encontró binary.data en la respuesta\"\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        848
+      ],
+      "id": "ecbc3e7c-55bf-485b-a4a6-bcd773d2770b",
+      "name": "Preparar_Nombre_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b649d2fa-09c6-4a44-bbad-a279b4493a5f",
+              "leftValue": "={{ $json.tiene_archivo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -400,
+        848
+      ],
+      "id": "ed0946e4-9a76-49d0-a7d1-37b928ad0fff",
+      "name": "Validar_Archivo_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_completa }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        752
+      ],
+      "id": "404041e5-f230-465a-97cb-2d3cb8174242",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_RiesgoPais').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `log_${datosArchivo.fuente}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente,\n  institucion: datosArchivo.institucion,\n  categoria: datosArchivo.categoria,\n  periodicidad: datosArchivo.periodicidad,\n  estado: \"OK\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo,\n  ruta_archivo: datosArchivo.ruta_completa,\n  mensaje: \"Archivo crudo descargado, validado y guardado correctamente\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"OK\",\n      mensaje_log: \"Log de ejecución preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        752
+      ],
+      "id": "d85f0d8a-7ed7-4fee-b958-80dcfa1fe4ef",
+      "name": "Preparar_Log_OK_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        752
+      ],
+      "id": "1a3179f4-9504-4bef-a6e7-690b16969bd3",
+      "name": "Guardar_Log_OK_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_RiesgoPais').first().json;\nconst datosLog = $('Preparar_Log_OK_BCE_RiesgoPais').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_ok_${datosArchivo.fuente}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de ejecución correcta\n\nEstado: OK\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente}\nInstitución: ${datosArchivo.institucion}\nCategoría: ${datosArchivo.categoria}\nPeriodicidad: ${datosArchivo.periodicidad}\n\nArchivo generado:\n${datosArchivo.nombre_archivo}\n\nRuta del archivo crudo:\n${datosArchivo.ruta_completa}\n\nLog de ejecución:\n${datosLog.ruta_log}\n\nMensaje:\nEl archivo fue descargado, validado, almacenado y registrado correctamente.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"OK\",\n      mensaje_notificacion: \"Notificación de ejecución correcta preparada\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        752
+      ],
+      "id": "f06ffd61-fcd3-4227-b073-ba669cf79be7",
+      "name": "Preparar_Notificacion_OK_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        752
+      ],
+      "id": "d5b0ab53-11d9-4ca1-8a57-1e2700e3134b",
+      "name": "Guardar_Notificacion_OK_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_RiesgoPais').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente || \"bce_riesgo_pais\",\n  institucion: datosArchivo.institucion || \"bce\",\n  categoria: datosArchivo.categoria || \"publicaciones\",\n  periodicidad: datosArchivo.periodicidad || \"diaria\",\n  estado: \"ERROR\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo || null,\n  ruta_archivo: datosArchivo.ruta_completa || null,\n  mensaje_error: datosArchivo.mensaje || \"No se descargó el archivo o no existe binary.data\",\n  accion_tomada: \"Se registra incidente y el flujo puede continuar con otras fuentes\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"ERROR\",\n      mensaje_log: \"Log de error preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        976
+      ],
+      "id": "2be5b427-339c-4960-afb9-178653e23199",
+      "name": "Preparar_Log_Error_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        992
+      ],
+      "id": "5630460d-a51d-4c8a-ad89-b149c951c6db",
+      "name": "Guardar_Log_Error_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_RiesgoPais').first().json;\nconst datosError = $('Preparar_Log_Error_BCE_RiesgoPais').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de fallo parcial\n\nEstado: ERROR\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente || 'bce_riesgo_pais'}\nInstitución: ${datosArchivo.institucion || 'bce'}\nCategoría: ${datosArchivo.categoria || 'publicaciones'}\nPeriodicidad: ${datosArchivo.periodicidad || 'diaria'}\n\nArchivo esperado:\n${datosArchivo.nombre_archivo || 'No generado'}\n\nRuta esperada:\n${datosArchivo.ruta_completa || 'No definida'}\n\nLog de error:\n${datosError.ruta_log || 'No generado'}\n\nMensaje de error:\n${datosArchivo.mensaje || 'No se descargó el archivo o no existe binary.data'}\n\nAcción tomada:\nSe registró el incidente en logs. El pipeline puede continuar con otras fuentes sin detener toda la ejecución.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"ERROR\",\n      mensaje_notificacion: \"Notificación de error preparada correctamente\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        960
+      ],
+      "id": "dc54b04c-60d6-44cc-a52a-d3c21412c7d6",
+      "name": "Preparar_Notificacion_Error_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        960
+      ],
+      "id": "c8a82775-a674-4f39-892c-e71a15a9430b",
+      "name": "Guardar_Notificacion_Error_BCE_RiesgoPais"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ea7afc86-d785-410e-a021-f8b603b9c7d3",
+              "name": "workflow_nombre",
+              "value": "RPA_Macroentorno_Final",
+              "type": "string"
+            },
+            {
+              "id": "42ec38dc-c4ea-4fe4-a377-3a01307e1e77",
+              "name": "fuente",
+              "value": "bcw_wti",
+              "type": "string"
+            },
+            {
+              "id": "853bf452-39aa-4c3f-a6bc-4e0abd415c2a",
+              "name": "institucion",
+              "value": "bce",
+              "type": "string"
+            },
+            {
+              "id": "c90ce22c-8459-4dfe-8eec-be95ef4ccc60",
+              "name": "categoria",
+              "value": "sector_externo",
+              "type": "string"
+            },
+            {
+              "id": "4c2e3657-2eae-4d12-8836-44a1a23471c3",
+              "name": "nombre_base",
+              "value": "bce_wti",
+              "type": "string"
+            },
+            {
+              "id": "21a36e8c-d5e4-4d01-a679-ebffee808eba",
+              "name": "carpeta_destino",
+              "value": "/home/node/datos_macroentorno/bce/sector_externo",
+              "type": "string"
+            },
+            {
+              "id": "3ba4cf18-80f5-48ca-aaa5-7bef03e0c49d",
+              "name": "url",
+              "value": "https://contenido.bce.fin.ec/documentos/informacioneconomica/SectorReal/PrecioPetroleoWTI.xlsx",
+              "type": "string"
+            },
+            {
+              "id": "fd89a793-f9ad-49ec-b73e-a8be2c21de8f",
+              "name": "metodo_http",
+              "value": "GET",
+              "type": "string"
+            },
+            {
+              "id": "6932cebe-b0c4-4b6d-9d06-bd4fa2a04e1d",
+              "name": "periocidad",
+              "value": "diaria",
+              "type": "string"
+            },
+            {
+              "id": "d0c36662-a800-42cb-a03b-c3ae053da84f",
+              "name": "max_intentos",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "587650bf-0ce2-41df-978b-c563d4e4fe5e",
+              "name": "guardar_crudo",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "3c485c04-8c0e-4efb-bf15-72f9231f6291",
+              "name": "cargar_oracle",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        1200
+      ],
+      "id": "c9b468c6-d040-49e8-a47c-4295c5d78199",
+      "name": "Config_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -864,
+        1264
+      ],
+      "id": "bd66981c-9815-43f7-a9d0-0aa9a446dbf0",
+      "name": "Descargar_BCE_WTI",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config_BCE_WTI').first().json;\n\nconst carpetaDestino = cfg.carpeta_destino || \"/home/node/datos_macroentorno/bce/sector_externo\";\n\nconst fecha = new Date()\n  .toISOString()\n  .slice(0, 10)\n  .replace(/-/g, '');\n\nconst nombreArchivo = `${cfg.nombre_base || \"bce_wti\"}_${fecha}.${cfg.extension_esperada || \"xlsx\"}`;\n\nconst rutaCompleta = `${carpetaDestino}/${nombreArchivo}`;\n\nreturn items.map(item => {\n  const tieneArchivo = !!item.binary?.data;\n\n  return {\n    json: {\n      workflow_nombre: cfg.workflow_nombre || \"RPA_Macroentorno_Final\",\n      fuente: cfg.fuente || \"bce_wti\",\n      institucion: cfg.institucion || \"bce\",\n      categoria: cfg.categoria || \"sector_externo\",\n      periodicidad: cfg.periodicidad || \"diaria\",\n      fecha_descarga: fecha,\n      nombre_archivo: nombreArchivo,\n      ruta_completa: rutaCompleta,\n      extension_esperada: cfg.extension_esperada || \"xlsx\",\n      tiene_archivo: tieneArchivo,\n      estado_descarga: tieneArchivo ? \"OK\" : \"ERROR\",\n      mensaje: tieneArchivo\n        ? \"Archivo descargado correctamente\"\n        : \"No se encontró binary.data en la respuesta\"\n    },\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -656,
+        1264
+      ],
+      "id": "a4258797-d2bb-42ab-949a-ebaf1e6fbf2c",
+      "name": "Preparar_Nombre_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dcf97f59-72a6-4c0a-8ef9-fd79fd7f2630",
+              "leftValue": "={{ $json.tiene_archivo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        1264
+      ],
+      "id": "d89eaade-439e-4972-887f-d9452e7fbade",
+      "name": "Validar_Archivo_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_completa }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        1168
+      ],
+      "id": "250509d2-f417-4656-b6d5-7a29ff23bce0",
+      "name": "Guardar_Archivo_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_WTI').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `log_${datosArchivo.fuente}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente,\n  institucion: datosArchivo.institucion,\n  categoria: datosArchivo.categoria,\n  periodicidad: datosArchivo.periodicidad,\n  estado: \"OK\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo,\n  ruta_archivo: datosArchivo.ruta_completa,\n  mensaje: \"Archivo crudo descargado, validado y guardado correctamente\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"OK\",\n      mensaje_log: \"Log de ejecución preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        1168
+      ],
+      "id": "b20b399d-237b-47a5-9042-55b9f089feda",
+      "name": "Preparar_Log_OK_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        1168
+      ],
+      "id": "cd71b926-dd16-4986-a2a6-5e1fe0716158",
+      "name": "Guardar_Log_OK_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_WTI').first().json;\nconst datosLog = $('Preparar_Log_OK_BCE_WTI').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_ok_${datosArchivo.fuente}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de ejecución correcta\n\nEstado: OK\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente}\nInstitución: ${datosArchivo.institucion}\nCategoría: ${datosArchivo.categoria}\nPeriodicidad: ${datosArchivo.periodicidad}\n\nArchivo generado:\n${datosArchivo.nombre_archivo}\n\nRuta del archivo crudo:\n${datosArchivo.ruta_completa}\n\nLog de ejecución:\n${datosLog.ruta_log}\n\nMensaje:\nEl archivo fue descargado, validado, almacenado y registrado correctamente.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"OK\",\n      mensaje_notificacion: \"Notificación de ejecución correcta preparada\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1184
+      ],
+      "id": "2c7f2d87-7260-40a8-987e-095889c20a71",
+      "name": "Preparar_Notificacion_OK_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        1184
+      ],
+      "id": "a90f8a02-0e2b-486c-89bd-80db1677c16b",
+      "name": "Guardar_Notificacion_OK_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_WTI').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreLog = `error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.json`;\nconst rutaLog = `/home/node/datos_macroentorno/logs/${nombreLog}`;\n\nconst log = {\n  fecha_hora: fechaHora,\n  workflow: datosArchivo.workflow_nombre || \"RPA_Macroentorno_Final\",\n  fuente: datosArchivo.fuente || \"bce_wti\",\n  institucion: datosArchivo.institucion || \"bce\",\n  categoria: datosArchivo.categoria || \"sector_externo\",\n  periodicidad: datosArchivo.periodicidad || \"diaria\",\n  estado: \"ERROR\",\n  intentos: 1,\n  archivo_generado: datosArchivo.nombre_archivo || null,\n  ruta_archivo: datosArchivo.ruta_completa || null,\n  mensaje_error: datosArchivo.mensaje || \"No se descargó el archivo o no existe binary.data\",\n  accion_tomada: \"Se registra incidente y el flujo puede continuar con otras fuentes\"\n};\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_log: nombreLog,\n      ruta_log: rutaLog,\n      estado_log: \"ERROR\",\n      mensaje_log: \"Log de error preparado correctamente\"\n    },\n    binary: {\n      log: {\n        data: Buffer.from(JSON.stringify(log, null, 2), 'utf8').toString('base64'),\n        mimeType: 'application/json',\n        fileName: nombreLog\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        1360
+      ],
+      "id": "1cb170ac-d7b8-4c51-94c4-50f4647d33a5",
+      "name": "Preparar_Log_Error_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_log }}",
+        "dataPropertyName": "log",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        1360
+      ],
+      "id": "c3a0a0c4-f439-420b-b3b2-2d6ea3083234",
+      "name": "Guardar_Log_Error_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const datosArchivo = $('Preparar_Nombre_BCE_WTI').first().json;\nconst datosError = $('Preparar_Log_Error_BCE_WTI').first().json;\n\nconst fechaHora = new Date().toISOString();\nconst fecha = fechaHora.slice(0, 10).replace(/-/g, '');\nconst hora = fechaHora.slice(11, 19).replace(/:/g, '');\n\nconst nombreNotificacion = `notificacion_error_${datosArchivo.fuente || 'fuente_desconocida'}_${fecha}_${hora}.txt`;\nconst rutaNotificacion = `/home/node/datos_macroentorno/logs/${nombreNotificacion}`;\n\nconst contenido = `\nPIPELINE RPA MACROENTORNO ECUADOR\nNotificación de fallo parcial\n\nEstado: ERROR\nFecha y hora: ${fechaHora}\n\nFuente procesada: ${datosArchivo.fuente || 'bce_wti'}\nInstitución: ${datosArchivo.institucion || 'bce'}\nCategoría: ${datosArchivo.categoria || 'sector_externo'}\nPeriodicidad: ${datosArchivo.periodicidad || 'diaria'}\n\nArchivo esperado:\n${datosArchivo.nombre_archivo || 'No generado'}\n\nRuta esperada:\n${datosArchivo.ruta_completa || 'No definida'}\n\nLog de error:\n${datosError.ruta_log || 'No generado'}\n\nMensaje de error:\n${datosArchivo.mensaje || 'No se descargó el archivo o no existe binary.data'}\n\nAcción tomada:\nSe registró el incidente en logs. El pipeline puede continuar con otras fuentes sin detener toda la ejecución.\n\nEquipo destino:\nEquipo de Datos\n`;\n\nreturn [\n  {\n    json: {\n      ...datosArchivo,\n      nombre_notificacion: nombreNotificacion,\n      ruta_notificacion: rutaNotificacion,\n      estado_notificacion: \"ERROR\",\n      mensaje_notificacion: \"Notificación de error preparada correctamente\"\n    },\n    binary: {\n      notificacion: {\n        data: Buffer.from(contenido.trim(), 'utf8').toString('base64'),\n        mimeType: 'text/plain',\n        fileName: nombreNotificacion\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        1360
+      ],
+      "id": "3e6ea1eb-6a0c-4729-b83f-064f0d305a77",
+      "name": "Preparar_Notificacion_Error_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.ruta_notificacion }}",
+        "dataPropertyName": "notificacion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        1360
+      ],
+      "id": "64cc0abb-bef1-4688-a08f-cc29b49e184b",
+      "name": "Guardar_Notificacion_Error_BCE_WTI"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dbbbf069-b3f1-417e-b47b-2fc6fcf400ba",
+              "name": "workflow_nombre",
+              "value": "RPA_Macroentorno_Final",
+              "type": "string"
+            },
+            {
+              "id": "834ffa6b-131a-403c-8704-d11e8c78494e",
+              "name": "fuente",
+              "value": "bce_iee",
+              "type": "string"
+            },
+            {
+              "id": "2a870795-77ba-4712-9b61-57740eae9712",
+              "name": "institucion",
+              "value": "bce",
+              "type": "string"
+            },
+            {
+              "id": "28b1fcfb-066f-4caf-a162-820e328362f2",
+              "name": "categoria",
+              "value": "sector_real",
+              "type": "string"
+            },
+            {
+              "id": "e0b4684b-9eb3-4d57-b803-9d56ff57b1ae",
+              "name": "nombre_base",
+              "value": "bce_iee",
+              "type": "string"
+            },
+            {
+              "id": "d7518825-279d-476f-b7f2-4ec1a29d1a43",
+              "name": "extension_esperada",
+              "value": "html",
+              "type": "string"
+            },
+            {
+              "id": "38b85a3e-17b6-4399-8b25-1d9164a592c6",
+              "name": "carpeta_esperada",
+              "value": "/home/node/datos_macroentorno/bce/sector_real",
+              "type": "string"
+            },
+            {
+              "id": "4377c438-4879-431c-a6ae-5633bb801702",
+              "name": "url",
+              "value": "https://contenido.bce.fin.ec/documentos/informacioneconomica/coyuntura/indice_IEE.html",
+              "type": "string"
+            },
+            {
+              "id": "86c208eb-8e94-4c50-a4ea-da75967bc153",
+              "name": "metodo_http",
+              "value": "GET",
+              "type": "string"
+            },
+            {
+              "id": "ba9e2b2f-1626-4815-a747-9f55e367a706",
+              "name": "periocidad",
+              "value": "mensual",
+              "type": "string"
+            },
+            {
+              "id": "7533332a-04db-4c83-b196-026492adea2b",
+              "name": "max_intentos",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "69c11436-9655-4ea7-8ee4-c670986a29e7",
+              "name": "guardar_crudo",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "e1343918-7a05-4f67-a302-01a6605a60cf",
+              "name": "cargar_oracle",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        1696
+      ],
+      "id": "62510746-5ce3-4adf-abf5-cb4245096caf",
+      "name": "Config_BCE_IEE"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Config_Fuente_Ranking",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Config_MINEDUC_AMIE",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Config_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Config_BCE_WTI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Config_BCE_IEE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar_Supercias_Ranking": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Nombre_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config_Fuente_Ranking": {
+      "main": [
+        [
+          {
+            "node": "Descargar_Supercias_Ranking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Nombre_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Validar_Archivo_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar_Archivo_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Archivo_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar_Log_Error_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Archivo_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Log_OK_Supercias1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_OK_Supercias1": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_OK_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_OK_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_OK_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_OK_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_OK_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_Error_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_Error_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_Error_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_Error_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_Error_Supercias": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_Error_Supercias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config_MINEDUC_AMIE": {
+      "main": [
+        [
+          {
+            "node": "Descargar_MINEDUC_AMIE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar_MINEDUC_AMIE": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Nombre_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Nombre_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Validar_Archivo_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar_Archivo_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Archivo_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar_Log_Error_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Archivo_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Log_OK_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_OK_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_OK_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_OK_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_OK_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_OK_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_OK_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_Error_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_Error_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_Error_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_Error_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_Error_MINEDUC": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_Error_MINEDUC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Descargar_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Nombre_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Nombre_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Validar_Archivo_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar_Archivo_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar_Log_Error_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Log_OK_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_OK_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_OK_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_OK_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_OK_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_OK_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_OK_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_Error_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_Error_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_Error_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_Error_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_Error_BCE_RiesgoPais": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_Error_BCE_RiesgoPais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Descargar_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Nombre_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Nombre_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Validar_Archivo_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar_Archivo_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Archivo_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar_Log_Error_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Archivo_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Log_OK_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_OK_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_OK_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_OK_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_OK_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_OK_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_OK_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Log_Error_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Log_Error_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar_Log_Error_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Preparar_Notificacion_Error_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar_Notificacion_Error_BCE_WTI": {
+      "main": [
+        [
+          {
+            "node": "Guardar_Notificacion_Error_BCE_WTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fb4b2498-25c6-40e0-8e5d-6fc33ebfc188",
+  "meta": {
+    "instanceId": "425ae91c12f4b94cfdf82ff5b5ac0d9406da463459a735641cef19e14c844e06"
+  },
+  "id": "VIYmPsVjXMZscQWx",
+  "tags": []
+}
