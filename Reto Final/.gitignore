@@ -1,0 +1,11 @@
+# Ignorar todo
+*
+
+# Permitir carpetas para poder encontrar JSON dentro de subcarpetas
+!*/
+
+# Permitir solo archivos JSON
+!*.json
+
+# Permitir este archivo
+!.gitignore
