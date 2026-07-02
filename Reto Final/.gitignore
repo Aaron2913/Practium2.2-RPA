@@ -1,11 +1,58 @@
-# Ignorar todo
+# =====================================================
+# IGNORAR TODO POR DEFECTO
+# =====================================================
 *
 
-# Permitir carpetas para poder encontrar JSON dentro de subcarpetas
+# Permitir carpetas
 !*/
 
-# Permitir solo archivos JSON
+# =====================================================
+# ARCHIVOS IMPORTANTES DEL RETO
+# =====================================================
+!.gitignore
+!README.md
+!*.md
+!*.txt
+
+# Workflows n8n
 !*.json
 
-# Permitir este archivo
-!.gitignore
+# Diagramas C4 / Draw.io
+!*.drawio
+
+# Imágenes y capturas de evidencia
+!*.png
+!*.jpg
+!*.jpeg
+!*.webp
+
+# Archivos para mantener carpetas vacías
+!.gitkeep
+
+# =====================================================
+# NO SUBIR CREDENCIALES / WALLET ORACLE
+# =====================================================
+rpamacro/
+Wallet_RPAMACRO/
+**/Wallet_RPAMACRO/
+*.pem
+*.p12
+*.sso
+*.jks
+tnsnames.ora
+sqlnet.ora
+ojdbc.properties
+cwallet.sso
+ewallet.p12
+ewallet.pem
+keystore.jks
+truststore.jks
+
+# =====================================================
+# NO SUBIR ARCHIVOS PESADOS DESCARGADOS
+# =====================================================
+*.zip
+*.xlsx
+*.csv
+*.xls
+*.html

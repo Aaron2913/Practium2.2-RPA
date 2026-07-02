@@ -1,0 +1,137 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT">
+  <diagram id="d4b2c090f1d04f21923cd01a7ace3548" name="C4 Nivel 2 - Contenedores">
+    <mxGraphModel dx="4142" dy="971" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#111827;" value="C4 – Nivel 2: Contenedores del Pipeline RPA Macroentorno Ecuador" vertex="1">
+          <mxGeometry height="40" width="850" x="310" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#374151;" value="Vista general del proyecto: activación, extracción, validación, almacenamiento, carga, logs y notificación" vertex="1">
+          <mxGeometry height="26" width="720" x="375" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="op" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;spacing=8;" value="Operador RPA [Persona] Ejecuta pruebas manuales y revisa resultados" vertex="1">
+          <mxGeometry height="80" width="190" x="-220" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cron" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;spacing=8;" value="Planificador n8n / Cron [Sistema] Dispara ejecuciones automáticas por periodicidad" vertex="1">
+          <mxGeometry height="80" width="190" x="-220" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="sources" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;spacing=8;" value="Fuentes públicas [Sistemas externos] BCE, INEC, Supercias, MINEDUC" vertex="1">
+          <mxGeometry height="90" width="190" x="1000" y="84" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2563EB;strokeWidth=2;dashed=1;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=10;" value="Sistema: Pipeline RPA Macroentorno Ecuador" vertex="1">
+          <mxGeometry height="525" width="890" x="60" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="manual" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;strokeWidth=2;fontSize=12;fontColor=#064E3B;spacing=8;" value="Manual Trigger [Contenedor n8n] Inicio para pruebas y validación manual" vertex="1">
+          <mxGeometry height="75" width="185" x="130" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="schedule" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#059669;strokeWidth=2;fontSize=12;fontColor=#064E3B;spacing=8;" value="Schedule Trigger [Contenedor n8n] Inicio diario, mensual, trimestral o anual" vertex="1">
+          <mxGeometry height="75" width="185" x="120" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="orch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=2;fontSize=12;fontColor=#111827;spacing=8;" value="Orquestador Workflow n8n [Contenedor] Coordina el flujo y enruta por fuente/periodicidad" vertex="1">
+          <mxGeometry height="90" width="230" x="420" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="extract" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=2;fontSize=12;fontColor=#111827;spacing=8;" value="Módulo de Extracción [Contenedor] Consulta URLs y descarga archivos/respuestas HTTP" vertex="1">
+          <mxGeometry height="85" width="210" x="710" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="validate" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=2;fontSize=12;fontColor=#111827;spacing=8;" value="Módulo de Validación [Contenedor] Verifica HTTP 200, archivo no vacío y formato esperado" vertex="1">
+          <mxGeometry height="85" width="210" x="440" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="raw" parent="1" style="shape=cylinder3d;whiteSpace=wrap;boundedLbl=1;backgroundOutline=1;size=15;html=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontSize=12;fontColor=#78350F;spacing=8;" value="Repositorio de archivos crudos" vertex="1">
+          <mxGeometry height="105" width="250" x="360" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="parse" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=2;fontSize=12;fontColor=#111827;spacing=8;" value="Parsing y Normalización [Contenedor] Lee CSV/XLSX/ZIP/HTML y estandariza estructura común" vertex="1">
+          <mxGeometry height="95" width="210" x="690" y="292.5" as="geometry" />
+        </mxCell>
+        <mxCell id="retry" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=2;fontSize=12;fontColor=#7F1D1D;spacing=8;" value="Manejo de errores y respaldo [Contenedor] Reintenta hasta 3 veces y usa última versión válida si existe" vertex="1">
+          <mxGeometry height="95" width="210" x="80" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="oracle" parent="1" style="shape=cylinder3d;whiteSpace=wrap;boundedLbl=1;backgroundOutline=1;size=15;html=1;fillColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontSize=12;fontColor=#78350F;spacing=8;" value="Oracle Database [Sistema externo] Esquema MACROENTORNO Tablas staging por fuente" vertex="1">
+          <mxGeometry height="105" width="220" x="1140" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="logs" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=2;fontSize=12;fontColor=#7C2D12;spacing=8;" value="Logs de ejecución y errores [File System / DB] fecha, fuente, estado, intentos, ruta, error" vertex="1">
+          <mxGeometry height="105" width="220" x="90" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="email" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF2F8;strokeColor=#DB2777;strokeWidth=2;fontSize=12;fontColor=#831843;spacing=8;" value="Servicio de correo [Sistema externo] Envía resumen al equipo de Datos" vertex="1">
+          <mxGeometry height="80" width="220" x="1140" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="data" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontSize=12;fontColor=#1E3A8A;spacing=8;" value="Equipo de Datos [Consumidor] Limpieza, transformación y tablero Macroentorno" vertex="1">
+          <mxGeometry height="100" width="230" x="1430" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=2;fontSize=12;fontColor=#7C2D12;spacing=8;" value="Nota C4 Nivel 2 Este nivel muestra contenedores y sistemas relacionados. No detalla cada nodo interno de n8n; eso corresponde al Nivel 3." vertex="1">
+          <mxGeometry height="70" width="390" x="1200" y="14" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="op" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="manual" value="activa ejecución manual">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="cron" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="schedule" value="dispara por horario">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="manual" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="orch" value="inicia flujo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="schedule" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="orch" value="inicia flujo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="orch" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="extract" value="ordena extracción">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="extract" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#1E3A8A;strokeColor=#2563EB;" target="sources" value="consulta/descarga">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="extract" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="validate" value="archivo/respuesta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="validate" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="raw" value="si es válido: guarda crudo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="validate" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="retry" value="si falla">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="retry" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#991B1B;strokeColor=#DC2626;dashed=1;" target="logs" value="registra incidente">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="retry" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#991B1B;strokeColor=#DC2626;dashed=1;" target="raw" value="usa respaldo si existe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="raw" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="parse" value="lee archivo crudo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="parse" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="merge" value="datos normalizados">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="merge" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="oracle" value="carga posterior">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="merge" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="logs" value="guarda trazabilidad">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="merge" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="email" value="envía resumen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="email" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="data" value="notifica estado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="oracle" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="data" value="consulta datos">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="merge" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="data" value="entrega archivos trazables">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MMCIU1JXEl8m_T6Jrsdi-3" edge="1" parent="1" source="raw" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=11;fontColor=#374151;strokeColor=#374151;" target="merge" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="483" as="sourcePoint" />
+            <mxPoint x="1430" y="358" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="merge" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=2;fontSize=12;fontColor=#111827;spacing=8;" value="Consolidación [Contenedor] Une resultados válidos, metadatos y estado de ejecución" vertex="1">
+          <mxGeometry height="65" width="250" x="680" y="460" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
